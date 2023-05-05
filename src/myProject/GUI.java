@@ -4,6 +4,8 @@ package myProject;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 /**
  * This class is used for ...
@@ -14,7 +16,12 @@ public class GUI extends JFrame {
 
     private Header headerProject;
     private JButton lanzar, ayuda, salir;
+    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10;
     private JPanel dadosInactivos, dadosActivos, dadosUsados, tablero;
+    private ImageIcon imageDado;
+    private Escucha escucha;
+    private Model model;
+
 
     /**
      * Constructor of myProject.GUI class
@@ -72,7 +79,7 @@ public class GUI extends JFrame {
         this.getContentPane().add(salir, gbc2);
 
         JPanel dadosInactivos = new JPanel();
-        dadosInactivos.setPreferredSize(new Dimension(300,200));
+        dadosInactivos.setPreferredSize(new Dimension(400,200));
         dadosInactivos.setBorder(BorderFactory.createTitledBorder("Dados Inactivos"));
         GridBagConstraints gbc3 = new GridBagConstraints();
         gbc3.gridx=0;
@@ -83,7 +90,7 @@ public class GUI extends JFrame {
         this.getContentPane().add(dadosInactivos,gbc3);
 
         JPanel dadosActivos = new JPanel();
-        dadosActivos.setPreferredSize(new Dimension(300,200));
+        dadosActivos.setPreferredSize(new Dimension(200,200));
         dadosActivos.setBorder(BorderFactory.createTitledBorder("Dados Activos"));
         GridBagConstraints gbc4 = new GridBagConstraints();
         gbc4.gridx=2;
@@ -126,13 +133,34 @@ public class GUI extends JFrame {
         gbc7.anchor=GridBagConstraints.CENTER;
         this.getContentPane().add(tablero,gbc7);
 
+        imageDado = new ImageIcon(getClass().getResource("/resources/6.png"));
+        dado1 = new JLabel(imageDado);
+        dado2 = new JLabel(imageDado);
+        dado3 = new JLabel(imageDado);
+        dado4 = new JLabel(imageDado);
+        dado5 = new JLabel(imageDado);
+        dado6 = new JLabel(imageDado);
+        dado7 = new JLabel(imageDado);
+        dado8 = new JLabel(imageDado);
+        dado9 = new JLabel(imageDado);
+        dado10 = new JLabel(imageDado);
 
+        model = new Model();
+        escucha = new Escucha();
+        lanzar.addActionListener(escucha);
 
-
+        dadosActivos.add(dado1);
+        dadosActivos.add(dado2);
+        dadosActivos.add(dado3);
+        dadosActivos.add(dado4);
+        dadosActivos.add(dado5);
+        dadosActivos.add(dado6);
+        dadosActivos.add(dado7);
+        dadosInactivos.add(dado8);
+        dadosInactivos.add(dado9);
+        dadosInactivos.add(dado10);
 
         //Change this line if you change JFrame Container's Layout
-
-
     }
 
     /**
@@ -149,7 +177,32 @@ public class GUI extends JFrame {
     /**
      * inner class that extends an Adapter Class or implements Listeners used by myProject.GUI class
      */
-    private class Escucha {
+    private class Escucha implements ActionListener {
 
+        @Override
+        public void actionPerformed(ActionEvent e) {
+            model.calcularTiro();
+            int[] caras = model.getCaras();
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[0]+".png"));
+            dado1.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[1]+".png"));
+            dado2.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[2]+".png"));
+            dado3.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[3]+".png"));
+            dado4.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[4]+".png"));
+            dado5.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[5]+".png"));
+            dado6.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[6]+".png"));
+            dado7.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[7]+".png"));
+            dado8.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[8]+".png"));
+            dado9.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[9]+".png"));
+            dado10.setIcon(imageDado);
+        }
     }
 }
