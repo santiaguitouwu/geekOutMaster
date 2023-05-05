@@ -20,6 +20,7 @@ public class GUI extends JFrame {
     private JPanel dadosInactivos, dadosActivos, dadosUsados, tablero;
     private ImageIcon imageDado;
     private Escucha escucha;
+    private Model model;
 
 
     /**
@@ -144,6 +145,7 @@ public class GUI extends JFrame {
         dado9 = new JLabel(imageDado);
         dado10 = new JLabel(imageDado);
 
+        model = new Model();
         escucha = new Escucha();
         lanzar.addActionListener(escucha);
 
@@ -179,7 +181,28 @@ public class GUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-
+            model.calcularTiro();
+            int[] caras = model.getCaras();
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[0]+".png"));
+            dado1.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[1]+".png"));
+            dado2.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[2]+".png"));
+            dado3.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[3]+".png"));
+            dado4.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[4]+".png"));
+            dado5.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[5]+".png"));
+            dado6.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[6]+".png"));
+            dado7.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[7]+".png"));
+            dado8.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[8]+".png"));
+            dado9.setIcon(imageDado);
+            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[9]+".png"));
+            dado10.setIcon(imageDado);
         }
     }
 }
