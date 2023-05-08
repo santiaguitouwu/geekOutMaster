@@ -57,7 +57,7 @@ public class GUI extends JFrame {
         gbc.gridy=0;
         gbc.fill=GridBagConstraints.BOTH;
         gbc.anchor=GridBagConstraints.CENTER;
-        gbc.gridwidth=4;
+        gbc.gridwidth=2;
 
         this.getContentPane().add(headerProject,gbc);
 
@@ -72,7 +72,7 @@ public class GUI extends JFrame {
 
         salir = new JButton("Salir");
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.gridx=3;
+        gbc2.gridx=1;
         gbc2.gridy=1;
         gbc2.gridwidth=1;
         gbc2.fill=GridBagConstraints.NONE;
@@ -80,56 +80,56 @@ public class GUI extends JFrame {
         this.getContentPane().add(salir, gbc2);
 
         dadosInactivos = new JPanel();
-        dadosInactivos.setPreferredSize(new Dimension(400,200));
+        dadosInactivos.setPreferredSize(new Dimension(400,400));
         dadosInactivos.setBorder(BorderFactory.createTitledBorder("Dados Inactivos"));
         GridBagConstraints gbc3 = new GridBagConstraints();
-        gbc3.gridx=0;
+        gbc3.gridx=1;
         gbc3.gridy=2;
-        gbc3.gridwidth=2;
-        gbc3.fill=GridBagConstraints.BOTH;
-        gbc3.anchor=GridBagConstraints.CENTER;
+        gbc3.gridwidth=1;
+        gbc3.gridheight=2;
+        gbc3.anchor=GridBagConstraints.LINE_END;
+        gbc3.fill=GridBagConstraints.CENTER;
+
         this.getContentPane().add(dadosInactivos,gbc3);
 
         dadosActivos = new JPanel();
         dadosActivos.setPreferredSize(new Dimension(200,200));
         dadosActivos.setBorder(BorderFactory.createTitledBorder("Dados Activos"));
         GridBagConstraints gbc4 = new GridBagConstraints();
-        gbc4.gridx=2;
-        gbc4.gridy=2;
+        gbc4.gridx=0;
+        gbc4.gridy=4;
         gbc4.gridwidth=2;
-        gbc4.gridheight=2;
-        gbc4.fill=GridBagConstraints.BOTH;
-        gbc4.anchor=GridBagConstraints.CENTER;
+        gbc4.fill=GridBagConstraints.CENTER;
         this.getContentPane().add(dadosActivos,gbc4);
 
         dadosUsados = new JPanel();
-        dadosUsados.setPreferredSize(new Dimension(300,200));
+        dadosUsados.setPreferredSize(new Dimension(400,400));
         dadosUsados.setBorder(BorderFactory.createTitledBorder("Dados Usados"));
         GridBagConstraints gbc5 = new GridBagConstraints();
+        gbc5.anchor=GridBagConstraints.LINE_START;
         gbc5.gridx=0;
-        gbc5.gridy=3;
-        gbc5.gridwidth=2;
-        gbc5.fill=GridBagConstraints.BOTH;
-        gbc5.anchor=GridBagConstraints.CENTER;
+        gbc5.gridy=2;
+        gbc5.gridwidth=1;
+        gbc5.gridheight=2;
+        gbc5.fill=GridBagConstraints.CENTER;
         this.getContentPane().add(dadosUsados,gbc5);
 
         lanzar = new JButton("Lanzar");
         GridBagConstraints gbc6 = new GridBagConstraints();
-        gbc6.gridx=1;
-        gbc6.gridy=4;
+        gbc6.gridx=0;
+        gbc6.gridy=5;
         gbc6.gridwidth=2;
-        gbc6.weightx=0.5;
-        gbc6.fill=GridBagConstraints.BOTH;
+        gbc6.fill=GridBagConstraints.NONE;
         gbc6.anchor=GridBagConstraints.CENTER;
         this.getContentPane().add(lanzar, gbc6);
 
         tablero = new JPanel();
-        tablero.setPreferredSize(new Dimension(450,200));
+        tablero.setPreferredSize(new Dimension(400,300));
         tablero.setBorder(BorderFactory.createTitledBorder("Tablero de Puntuación"));
         GridBagConstraints gbc7 = new GridBagConstraints();
         gbc7.gridx=0;
-        gbc7.gridy=5;
-        gbc7.gridwidth=4;
+        gbc7.gridy=6;
+        gbc7.gridwidth=2;
         gbc7.fill=GridBagConstraints.BOTH;
         gbc7.anchor=GridBagConstraints.CENTER;
         this.getContentPane().add(tablero,gbc7);
