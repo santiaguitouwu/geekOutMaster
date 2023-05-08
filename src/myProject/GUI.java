@@ -136,7 +136,7 @@ public class GUI extends JFrame {
 
         ventanaAyuda = new JFrame();
         ventanaAyuda.setTitle("Ayuda");
-        ventanaAyuda.setSize(800,300);
+        ventanaAyuda.setSize(850,300);
         ventanaAyuda.setDefaultCloseOperation(HIDE_ON_CLOSE);
         ventanaAyuda.setLayout(new BorderLayout());
         ventanaAyuda.setLocationRelativeTo(null);
@@ -180,6 +180,7 @@ public class GUI extends JFrame {
         escucha = new Escucha();
         lanzar.addActionListener(escucha);
         ayuda.addActionListener(escucha);
+        salir.addActionListener(escucha);
 
         dadosActivos.add(dado1);
         dadosActivos.add(dado2);
@@ -238,6 +239,9 @@ public class GUI extends JFrame {
                 dado10.setIcon(imageDado);
             } else if (e.getSource()==ayuda) {
                 ventanaAyuda.setVisible(true);
+            } else if (e.getSource()==salir){
+                Window ventana = SwingUtilities.getWindowAncestor(salir);
+                ventana.dispose();
             }
         }
     }
