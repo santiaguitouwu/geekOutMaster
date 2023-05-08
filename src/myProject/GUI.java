@@ -16,11 +16,12 @@ public class GUI extends JFrame {
 
     private Header headerProject;
     private JButton lanzar, ayuda, salir;
-    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10;
+    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10, textoAyuda;
     private JPanel dadosInactivos, dadosActivos, dadosUsados, tablero;
     private ImageIcon imageDado;
     private Escucha escucha;
     private Model model;
+    private JFrame ventanaAyuda;
 
 
     /**
@@ -56,82 +57,112 @@ public class GUI extends JFrame {
         gbc.gridy=0;
         gbc.fill=GridBagConstraints.BOTH;
         gbc.anchor=GridBagConstraints.CENTER;
-        gbc.gridwidth=4;
+        gbc.gridwidth=2;
 
         this.getContentPane().add(headerProject,gbc);
 
-        JButton help = new JButton("?");
+        ayuda = new JButton("?");
         GridBagConstraints gbc1 = new GridBagConstraints();
         gbc1.gridx=0;
         gbc1.gridy=1;
         gbc1.gridwidth=1;
         gbc1.fill=GridBagConstraints.NONE;
         gbc1.anchor=GridBagConstraints.LINE_START;
-        this.getContentPane().add(help, gbc1);
+        this.getContentPane().add(ayuda, gbc1);
 
-        JButton salir = new JButton("Salir");
+        salir = new JButton("Salir");
         GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.gridx=3;
+        gbc2.gridx=1;
         gbc2.gridy=1;
         gbc2.gridwidth=1;
         gbc2.fill=GridBagConstraints.NONE;
         gbc2.anchor=GridBagConstraints.LINE_END;
         this.getContentPane().add(salir, gbc2);
 
-        JPanel dadosInactivos = new JPanel();
-        dadosInactivos.setPreferredSize(new Dimension(400,200));
+        dadosInactivos = new JPanel();
+        dadosInactivos.setPreferredSize(new Dimension(400,400));
         dadosInactivos.setBorder(BorderFactory.createTitledBorder("Dados Inactivos"));
         GridBagConstraints gbc3 = new GridBagConstraints();
-        gbc3.gridx=0;
+        gbc3.gridx=1;
         gbc3.gridy=2;
-        gbc3.gridwidth=2;
-        gbc3.fill=GridBagConstraints.BOTH;
-        gbc3.anchor=GridBagConstraints.CENTER;
+        gbc3.gridwidth=1;
+        gbc3.gridheight=2;
+        gbc3.anchor=GridBagConstraints.LINE_END;
+        gbc3.fill=GridBagConstraints.CENTER;
+
         this.getContentPane().add(dadosInactivos,gbc3);
 
-        JPanel dadosActivos = new JPanel();
+        dadosActivos = new JPanel();
         dadosActivos.setPreferredSize(new Dimension(200,200));
         dadosActivos.setBorder(BorderFactory.createTitledBorder("Dados Activos"));
         GridBagConstraints gbc4 = new GridBagConstraints();
-        gbc4.gridx=2;
-        gbc4.gridy=2;
+        gbc4.gridx=0;
+        gbc4.gridy=4;
         gbc4.gridwidth=2;
-        gbc4.gridheight=2;
-        gbc4.fill=GridBagConstraints.BOTH;
-        gbc4.anchor=GridBagConstraints.CENTER;
+        gbc4.fill=GridBagConstraints.CENTER;
         this.getContentPane().add(dadosActivos,gbc4);
 
-        JPanel dadosUsados = new JPanel();
-        dadosUsados.setPreferredSize(new Dimension(300,200));
+        dadosUsados = new JPanel();
+        dadosUsados.setPreferredSize(new Dimension(400,400));
         dadosUsados.setBorder(BorderFactory.createTitledBorder("Dados Usados"));
         GridBagConstraints gbc5 = new GridBagConstraints();
+        gbc5.anchor=GridBagConstraints.LINE_START;
         gbc5.gridx=0;
-        gbc5.gridy=3;
-        gbc5.gridwidth=2;
-        gbc5.fill=GridBagConstraints.BOTH;
-        gbc5.anchor=GridBagConstraints.CENTER;
+        gbc5.gridy=2;
+        gbc5.gridwidth=1;
+        gbc5.gridheight=2;
+        gbc5.fill=GridBagConstraints.CENTER;
         this.getContentPane().add(dadosUsados,gbc5);
 
-        JButton lanzar = new JButton("Lanzar");
+        lanzar = new JButton("Lanzar");
         GridBagConstraints gbc6 = new GridBagConstraints();
-        gbc6.gridx=1;
-        gbc6.gridy=4;
+        gbc6.gridx=0;
+        gbc6.gridy=5;
         gbc6.gridwidth=2;
-        gbc6.weightx=0.5;
-        gbc6.fill=GridBagConstraints.BOTH;
+        gbc6.fill=GridBagConstraints.NONE;
         gbc6.anchor=GridBagConstraints.CENTER;
         this.getContentPane().add(lanzar, gbc6);
 
-        JPanel tablero = new JPanel();
-        tablero.setPreferredSize(new Dimension(450,200));
+        tablero = new JPanel();
+        tablero.setPreferredSize(new Dimension(400,300));
         tablero.setBorder(BorderFactory.createTitledBorder("Tablero de Puntuación"));
         GridBagConstraints gbc7 = new GridBagConstraints();
         gbc7.gridx=0;
-        gbc7.gridy=5;
-        gbc7.gridwidth=4;
+        gbc7.gridy=6;
+        gbc7.gridwidth=2;
         gbc7.fill=GridBagConstraints.BOTH;
         gbc7.anchor=GridBagConstraints.CENTER;
         this.getContentPane().add(tablero,gbc7);
+
+        ventanaAyuda = new JFrame();
+        ventanaAyuda.setTitle("Ayuda");
+        ventanaAyuda.setSize(850,300);
+        ventanaAyuda.setDefaultCloseOperation(HIDE_ON_CLOSE);
+        ventanaAyuda.setLayout(new BorderLayout());
+        ventanaAyuda.setLocationRelativeTo(null);
+
+        textoAyuda = new JLabel("""
+                <html><b>Dinamica del Juego</b><br>
+                <br>
+                De los 10 dados que trae el juego se toman 3 y se colocan en el sector de "Dados Inactivos".
+                Los otros 7 dados se tiran y pasan a ser los "Dados Activos".
+                Se van eligiendo los dados a utilizar según las habilidades de sus caras y se pasan al sector de "Dados Utilizados".
+                                
+                Si como último dado activo queda un Dragón, se perderán todos los puntos acumulados.
+                                
+                Este juego lo jugará un único jugador y ganará si logra sumar 30 puntos o más en 5 rondas consecutivas de juego.
+                <br>
+                <br><b>Dados</b><br>
+       
+                <br><b>El Meeple </b> permite relanzar otro dado en juego, es decir, de la sección dados activos.         
+                <br><b>La Nave Espacial</b> envía un dado no usado (de la sección dados activos) a la sección de dados inactivos.        
+                <br><b>El Superhéroe permite</b> que cualquier dado no usado (sección dados activos) sea volteado y colocado en su cara opuesta.              
+                <br><b>El corazón</b> permite tomar un dado de la sección de dados inactivos y lanzarlo para que sea un nuevo dado activo.  
+                <br><b>El Dragón</b> es la cara que se quiere evitar, ya que si al final de la ronda es el último dado activo que queda se habrán perdido todos los puntos ganados y acumulados.     
+                <br><b>42</b> es la cara que permite sumar puntos al final de la ronda.
+                </html>
+                """);
+        ventanaAyuda.add(textoAyuda,BorderLayout.CENTER);
 
         imageDado = new ImageIcon(getClass().getResource("/resources/6.png"));
         dado1 = new JLabel(imageDado);
@@ -148,6 +179,8 @@ public class GUI extends JFrame {
         model = new Model();
         escucha = new Escucha();
         lanzar.addActionListener(escucha);
+        ayuda.addActionListener(escucha);
+        salir.addActionListener(escucha);
 
         dadosActivos.add(dado1);
         dadosActivos.add(dado2);
@@ -181,28 +214,35 @@ public class GUI extends JFrame {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            model.calcularTiro();
-            int[] caras = model.getCaras();
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[0]+".png"));
-            dado1.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[1]+".png"));
-            dado2.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[2]+".png"));
-            dado3.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[3]+".png"));
-            dado4.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[4]+".png"));
-            dado5.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[5]+".png"));
-            dado6.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[6]+".png"));
-            dado7.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[7]+".png"));
-            dado8.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[8]+".png"));
-            dado9.setIcon(imageDado);
-            imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[9]+".png"));
-            dado10.setIcon(imageDado);
+            if(e.getSource()==lanzar){
+                model.calcularTiro();
+                int[] caras = model.getCaras();
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[0]+".png"));
+                dado1.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[1]+".png"));
+                dado2.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[2]+".png"));
+                dado3.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[3]+".png"));
+                dado4.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[4]+".png"));
+                dado5.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[5]+".png"));
+                dado6.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[6]+".png"));
+                dado7.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[7]+".png"));
+                dado8.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[8]+".png"));
+                dado9.setIcon(imageDado);
+                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[9]+".png"));
+                dado10.setIcon(imageDado);
+            } else if (e.getSource()==ayuda) {
+                ventanaAyuda.setVisible(true);
+            } else if (e.getSource()==salir){
+                Window ventana = SwingUtilities.getWindowAncestor(salir);
+                ventana.dispose();
+            }
         }
     }
 }
