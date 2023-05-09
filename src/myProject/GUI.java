@@ -289,6 +289,7 @@ public class GUI extends JFrame {
 
                     imagePuntuacion = new ImageIcon(getClass().getResource("/resources/ImagePuntuacion.jpeg"));
                     puntos.setIcon(imagePuntuacion);
+                    //actualizarInterfaz();
                 }
 
             }
