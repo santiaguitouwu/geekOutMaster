@@ -13,236 +13,252 @@ import java.awt.event.ActionListener;
  * @version v.1.0.0 date:21/03/2023
  */
 public class GUI extends JFrame {
+    private static final String MENSAJE_INICIO = "Inicia el juego, con el boton 'Activar' podras activar el dado seleccionado"
+            + "Oprime el boton 'Cambiar' para cambiar el dado seleccionado"
+            + "\nEl Meeple permite relanzar otro dado en juego, es decir, de la sección dados activos."
+            + "\nLa Nave Espacial envía un dado no usado (de la sección dados activos) a la sección de dados\n" +
+            "inactivos."
+            + "\nEl Superhéroe permite que cualquier dado no usado (sección dados activos) sea volteado y\n" +
+            "colocado en su cara opuesta."
+            + "\nEl Corazón permite tomar un dado de la sección de dados inactivos y lanzarlo para que sea un\n" +
+            "nuevo dado activo."
+            + "\nEl Dragón es la cara que se quiere evitar, ya que si al final de la ronda es el último dado activo que\n" +
+            "queda se habrán perdido todos los puntos ganados y acumulados."
+            + "\n42 es cara que permite sumar puntos al final de la ronda."
+            + "\nEste juego lo jugará un único jugador y ganará si logra sumar 30 puntos en 5 rondas consecutivas de juego.";
 
     private Header headerProject;
-    private JButton lanzar, ayuda, salir;
-    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10, textoAyuda;
-    private JPanel dadosInactivos, dadosActivos, dadosUsados, tablero;
-    private ImageIcon imageDado;
+    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10, puntos;
+    private JButton activar, cambiar, ayuda, escoger;
+    private JPanel panelRondas, panelActivos, panelInactivos, panelUtilizados, panelPuntuacion, panelSeleccion, panelInteraccion, panelPuntos;
+    private ImageIcon imageDados, imagePuntuacion;
+    private JTextArea seleccionDado, tarjetaPuntuacion, tarjetaRonda, mensajeFinal;
     private Escucha escucha;
-    private Model model;
-    private JFrame ventanaAyuda;
+    private Model modelGame;
+    private int dadoSeleccionado, flag, controlLabel, dadoSecundario, dadoPrincipal;
 
 
     /**
-     * Constructor of myProject.GUI class
+     * Constructor of GUI class
      */
-    public GUI(){
+    public GUI() {
         initGUI();
-
+        setIconImage(new ImageIcon(getClass().getResource("/resources/dado.png")).getImage());
         //Default JFrame configuration
-        this.setTitle("Geek Out Master");
+        this.setTitle("Geek Out Masters");
         this.pack();
         this.setResizable(true);
         this.setVisible(true);
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        //this.setLayout(new GridBagLayout());
+        dadoSeleccionado = 0;
+        dadoSecundario = 10;
+        flag = 0;
+        controlLabel = 1;
     }
 
     /**
      * This method is used to set up the default JComponent Configuration,
-     * create Listener and control Objects used for the myProject.GUI class
+     * create Listener and control Objects used for the GUI class
      */
     private void initGUI() {
         //Set up JFrame Container's Layout
         this.getContentPane().setLayout(new GridBagLayout());
+        GridBagConstraints constrains = new GridBagConstraints();
+        GridBagConstraints GBCInterno = new GridBagConstraints();
+
         //Create Listener Object and Control Object
-        //Set up JComponent
-        //JPanel panelHeader = new JPanel();
-        //panelHeader.setLayout(new GridBagLayout());
-        headerProject = new Header("GeekMaster Game", Color.BLACK);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.gridx=0;
-        gbc.gridy=0;
-        gbc.fill=GridBagConstraints.BOTH;
-        gbc.anchor=GridBagConstraints.CENTER;
-        gbc.gridwidth=2;
-
-        this.getContentPane().add(headerProject,gbc);
-
-        ayuda = new JButton("?");
-        GridBagConstraints gbc1 = new GridBagConstraints();
-        gbc1.gridx=0;
-        gbc1.gridy=1;
-        gbc1.gridwidth=1;
-        gbc1.fill=GridBagConstraints.NONE;
-        gbc1.anchor=GridBagConstraints.LINE_START;
-        this.getContentPane().add(ayuda, gbc1);
-
-        salir = new JButton("Salir");
-        GridBagConstraints gbc2 = new GridBagConstraints();
-        gbc2.gridx=1;
-        gbc2.gridy=1;
-        gbc2.gridwidth=1;
-        gbc2.fill=GridBagConstraints.NONE;
-        gbc2.anchor=GridBagConstraints.LINE_END;
-        this.getContentPane().add(salir, gbc2);
-
-        dadosInactivos = new JPanel();
-        dadosInactivos.setPreferredSize(new Dimension(400,400));
-        dadosInactivos.setBorder(BorderFactory.createTitledBorder("Dados Inactivos"));
-        GridBagConstraints gbc3 = new GridBagConstraints();
-        gbc3.gridx=1;
-        gbc3.gridy=2;
-        gbc3.gridwidth=1;
-        gbc3.gridheight=2;
-        gbc3.anchor=GridBagConstraints.LINE_END;
-        gbc3.fill=GridBagConstraints.CENTER;
-
-        this.getContentPane().add(dadosInactivos,gbc3);
-
-        dadosActivos = new JPanel();
-        dadosActivos.setPreferredSize(new Dimension(200,200));
-        dadosActivos.setBorder(BorderFactory.createTitledBorder("Dados Activos"));
-        GridBagConstraints gbc4 = new GridBagConstraints();
-        gbc4.gridx=0;
-        gbc4.gridy=4;
-        gbc4.gridwidth=2;
-        gbc4.fill=GridBagConstraints.CENTER;
-        this.getContentPane().add(dadosActivos,gbc4);
-
-        dadosUsados = new JPanel();
-        dadosUsados.setPreferredSize(new Dimension(400,400));
-        dadosUsados.setBorder(BorderFactory.createTitledBorder("Dados Usados"));
-        GridBagConstraints gbc5 = new GridBagConstraints();
-        gbc5.anchor=GridBagConstraints.LINE_START;
-        gbc5.gridx=0;
-        gbc5.gridy=2;
-        gbc5.gridwidth=1;
-        gbc5.gridheight=2;
-        gbc5.fill=GridBagConstraints.CENTER;
-        this.getContentPane().add(dadosUsados,gbc5);
-
-        lanzar = new JButton("Lanzar");
-        GridBagConstraints gbc6 = new GridBagConstraints();
-        gbc6.gridx=0;
-        gbc6.gridy=5;
-        gbc6.gridwidth=2;
-        gbc6.fill=GridBagConstraints.NONE;
-        gbc6.anchor=GridBagConstraints.CENTER;
-        this.getContentPane().add(lanzar, gbc6);
-
-        tablero = new JPanel();
-        tablero.setPreferredSize(new Dimension(400,300));
-        tablero.setBorder(BorderFactory.createTitledBorder("Tablero de Puntuación"));
-        GridBagConstraints gbc7 = new GridBagConstraints();
-        gbc7.gridx=0;
-        gbc7.gridy=6;
-        gbc7.gridwidth=2;
-        gbc7.fill=GridBagConstraints.BOTH;
-        gbc7.anchor=GridBagConstraints.CENTER;
-        this.getContentPane().add(tablero,gbc7);
-
-        ventanaAyuda = new JFrame();
-        ventanaAyuda.setTitle("Ayuda");
-        ventanaAyuda.setSize(850,300);
-        ventanaAyuda.setDefaultCloseOperation(HIDE_ON_CLOSE);
-        ventanaAyuda.setLayout(new BorderLayout());
-        ventanaAyuda.setLocationRelativeTo(null);
-
-        textoAyuda = new JLabel("""
-                <html><b>Dinamica del Juego</b><br>
-                <br>
-                De los 10 dados que trae el juego se toman 3 y se colocan en el sector de "Dados Inactivos".
-                Los otros 7 dados se tiran y pasan a ser los "Dados Activos".
-                Se van eligiendo los dados a utilizar según las habilidades de sus caras y se pasan al sector de "Dados Utilizados".
-                                
-                Si como último dado activo queda un Dragón, se perderán todos los puntos acumulados.
-                                
-                Este juego lo jugará un único jugador y ganará si logra sumar 30 puntos o más en 5 rondas consecutivas de juego.
-                <br>
-                <br><b>Dados</b><br>
-       
-                <br><b>El Meeple </b> permite relanzar otro dado en juego, es decir, de la sección dados activos.         
-                <br><b>La Nave Espacial</b> envía un dado no usado (de la sección dados activos) a la sección de dados inactivos.        
-                <br><b>El Superhéroe permite</b> que cualquier dado no usado (sección dados activos) sea volteado y colocado en su cara opuesta.              
-                <br><b>El corazón</b> permite tomar un dado de la sección de dados inactivos y lanzarlo para que sea un nuevo dado activo.  
-                <br><b>El Dragón</b> es la cara que se quiere evitar, ya que si al final de la ronda es el último dado activo que queda se habrán perdido todos los puntos ganados y acumulados.     
-                <br><b>42</b> es la cara que permite sumar puntos al final de la ronda.
-                </html>
-                """);
-        ventanaAyuda.add(textoAyuda,BorderLayout.CENTER);
-
-        imageDado = new ImageIcon(getClass().getResource("/resources/6.png"));
-        dado1 = new JLabel(imageDado);
-        dado2 = new JLabel(imageDado);
-        dado3 = new JLabel(imageDado);
-        dado4 = new JLabel(imageDado);
-        dado5 = new JLabel(imageDado);
-        dado6 = new JLabel(imageDado);
-        dado7 = new JLabel(imageDado);
-        dado8 = new JLabel(imageDado);
-        dado9 = new JLabel(imageDado);
-        dado10 = new JLabel(imageDado);
-
-        model = new Model();
         escucha = new Escucha();
-        lanzar.addActionListener(escucha);
+        modelGame = new Model();
+        //Set up JComponents
+        seleccionDado = new JTextArea(2, 6);
+        tarjetaPuntuacion = new JTextArea(2, 5);
+        mensajeFinal = new JTextArea(2, 5);
+        tarjetaRonda = new JTextArea(1, 5);
+
+
+        headerProject = new Header("Mesa de Juego Geek Out Masters", Color.BLACK);
+        constrains.gridx = 0;
+        constrains.gridy = 0;
+        constrains.gridwidth = 2;
+        constrains.fill = GridBagConstraints.HORIZONTAL;
+        this.add(headerProject, constrains);
+
+        ayuda = new JButton(" ? ");
         ayuda.addActionListener(escucha);
-        salir.addActionListener(escucha);
+        constrains.gridx = 0;
+        constrains.gridy = 1;
+        constrains.gridwidth = 1;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.LINE_START;
+        this.add(ayuda, constrains);
 
-        dadosActivos.add(dado1);
-        dadosActivos.add(dado2);
-        dadosActivos.add(dado3);
-        dadosActivos.add(dado4);
-        dadosActivos.add(dado5);
-        dadosActivos.add(dado6);
-        dadosActivos.add(dado7);
-        dadosInactivos.add(dado8);
-        dadosInactivos.add(dado9);
-        dadosInactivos.add(dado10);
+        imageDados = new ImageIcon(getClass().getResource("/resources/dado.png"));
+        dado1 = new JLabel(imageDados);
+        dado2 = new JLabel(imageDados);
+        dado3 = new JLabel(imageDados);
+        dado4 = new JLabel(imageDados);
+        dado5 = new JLabel(imageDados);
+        dado6 = new JLabel(imageDados);
+        dado7 = new JLabel(imageDados);
+        dado8 = new JLabel(imageDados);
+        dado9 = new JLabel(imageDados);
+        dado10 = new JLabel(imageDados);
 
-        //Change this line if you change JFrame Container's Layout
+        imagePuntuacion = new ImageIcon(getClass().getResource("/resources/cartaDados.png"));
+        puntos = new JLabel(imagePuntuacion);
+
+
+        panelRondas = new JPanel();
+        panelRondas.setPreferredSize(new Dimension(200, 26));
+        panelRondas.setBackground(Color.lightGray);
+        constrains.gridx = 0;
+        constrains.gridy = 1;
+        constrains.gridwidth = 1;
+        constrains.fill = GridBagConstraints.HORIZONTAL;
+        constrains.anchor = GridBagConstraints.PAGE_END;
+        this.add(panelRondas, constrains);
+        panelRondas.add(tarjetaRonda);
+        tarjetaRonda.setBackground(null);
+
+        panelActivos = new JPanel();
+        panelActivos.setPreferredSize(new Dimension(400, 450));
+        panelActivos.setBorder(BorderFactory.createTitledBorder(" Dados Activos "));
+        constrains.gridx = 0;
+        constrains.gridy = 2;
+        constrains.gridheight = 4;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(panelActivos, constrains);
+
+        panelActivos.add(dado1);
+        panelActivos.add(dado2);
+        panelActivos.add(dado3);
+        panelActivos.add(dado4);
+        panelActivos.add(dado5);
+        panelActivos.add(dado6);
+        panelActivos.add(dado7);
+        panelActivos.add(dado8);
+        panelActivos.add(dado9);
+        panelActivos.add(dado10);
+
+
+        panelInactivos = new JPanel();
+        panelInactivos.setPreferredSize(new Dimension(330, 230));
+        panelInactivos.setBorder(BorderFactory.createTitledBorder(" Dados Inactivos "));
+        constrains.gridx = 1;
+        constrains.gridy = 1;
+        constrains.gridheight = 2;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(panelInactivos, constrains);
+
+        panelUtilizados = new JPanel();
+        panelUtilizados.setPreferredSize(new Dimension(330, 230));
+        panelUtilizados.setBorder(BorderFactory.createTitledBorder(" Dados Utilizados "));
+        constrains.gridx = 1;
+        constrains.gridy = 3;
+        constrains.gridheight = 2;
+        constrains.fill = GridBagConstraints.NONE;
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(panelUtilizados, constrains);
+
+        panelPuntuacion = new JPanel();
+        panelPuntuacion.setPreferredSize(new Dimension(330, 242));
+        panelPuntuacion.setBorder(BorderFactory.createTitledBorder(" Puntuacion "));
+        constrains.gridx = 1;
+        constrains.gridy = 5;
+        constrains.gridheight = 2;
+        constrains.fill = GridBagConstraints.BOTH;
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(panelPuntuacion, constrains);
+
+        panelPuntos = new JPanel();
+        panelPuntos.setPreferredSize(new Dimension(330, 26));
+        panelPuntos.setBackground(Color.lightGray);
+        panelPuntuacion.add(panelPuntos, BorderLayout.NORTH);
+        tarjetaPuntuacion.setBackground(null);
+        tarjetaPuntuacion.setEditable(false);
+        mensajeFinal.setBackground(null);
+        mensajeFinal.setEditable(false);
+        panelPuntos.add(tarjetaPuntuacion);
+
+        panelPuntuacion.add(puntos, BorderLayout.SOUTH);
+
+
+        panelInteraccion = new JPanel(new GridBagLayout());
+        panelInteraccion.setPreferredSize(new Dimension(300, 110));
+        panelInteraccion.setBackground(Color.CYAN);
+        constrains.gridx = 0;
+        constrains.gridy = 6;
+        constrains.gridheight = 1;
+        constrains.fill = GridBagConstraints.BOTH;
+        constrains.anchor = GridBagConstraints.CENTER;
+        add(panelInteraccion, constrains);
+
+
+        panelSeleccion = new JPanel();
+        panelSeleccion.setPreferredSize(new Dimension(260, 52));
+        panelSeleccion.setBackground(Color.LIGHT_GRAY);
+        GBCInterno.gridx = 0;
+        GBCInterno.gridy = 0;
+        GBCInterno.gridheight = 2;
+        GBCInterno.gridwidth = 1;
+        GBCInterno.fill = GridBagConstraints.NONE;
+        GBCInterno.anchor = GridBagConstraints.CENTER;
+        panelSeleccion.setVisible(false);
+        panelInteraccion.add(panelSeleccion, GBCInterno);
+
+
+        cambiar = new JButton("Iniciar Juego");
+        cambiar.addActionListener(escucha);
+        panelInteraccion.add(cambiar, GBCInterno);
+
+        activar = new JButton("activar");
+        activar.addActionListener(escucha);
+        GBCInterno.gridx = 1;
+        GBCInterno.gridy = 1;
+        GBCInterno.ipadx = 6;
+        GBCInterno.gridheight = 1;
+        GBCInterno.gridwidth = 1;
+        GBCInterno.weighty = 50.0;
+        GBCInterno.fill = GridBagConstraints.NONE;
+        GBCInterno.anchor = GridBagConstraints.FIRST_LINE_END;
+        activar.setVisible(false);
+        panelInteraccion.add(activar, GBCInterno);
+
+        escoger = new JButton("escoger");
+        escoger.addActionListener(escucha);
+        GBCInterno.gridx = 1;
+        GBCInterno.gridy = 1;
+        GBCInterno.ipadx = 8;
+        //GBCInterno.gridheight = 1;
+        GBCInterno.gridwidth = 1;
+        GBCInterno.weighty = 50.0;
+        GBCInterno.fill = GridBagConstraints.NONE;
+        GBCInterno.anchor = GridBagConstraints.FIRST_LINE_END;
+        escoger.setVisible(false);
+        panelInteraccion.add(escoger, GBCInterno);
+
     }
+
 
     /**
      * Main process of the Java program
+     *
      * @param args Object used in order to send input data from command line when
      *             the program is execute by console.
      */
-    public static void main(String[] args){
+    public static void main(String[] args) {
         EventQueue.invokeLater(() -> {
-            GUI miProjectGUI = new GUI();
+            GUI myProject = new GUI();
         });
     }
-
-    /**
-     * inner class that extends an Adapter Class or implements Listeners used by myProject.GUI class
-     */
     private class Escucha implements ActionListener {
 
         @Override
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource()==lanzar){
-                model.calcularTiro();
-                int[] caras = model.getCaras();
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[0]+".png"));
-                dado1.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[1]+".png"));
-                dado2.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[2]+".png"));
-                dado3.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[3]+".png"));
-                dado4.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[4]+".png"));
-                dado5.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[5]+".png"));
-                dado6.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[6]+".png"));
-                dado7.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[7]+".png"));
-                dado8.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[8]+".png"));
-                dado9.setIcon(imageDado);
-                imageDado = new ImageIcon(getClass().getResource("/resources/"+caras[9]+".png"));
-                dado10.setIcon(imageDado);
-            } else if (e.getSource()==ayuda) {
-                ventanaAyuda.setVisible(true);
-            } else if (e.getSource()==salir){
-                Window ventana = SwingUtilities.getWindowAncestor(salir);
-                ventana.dispose();
-            }
+
         }
     }
 }
