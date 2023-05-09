@@ -255,10 +255,45 @@ public class GUI extends JFrame {
         });
     }
     private class Escucha implements ActionListener {
+        String[] zonaActivos, zonaUtilizados,zonaInactivos;
 
         @Override
         public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == cambiar) {
+                if (flag != 1) {
+                    cambiar.setText("cambiar");
+                    GridBagConstraints GBCInterno = new GridBagConstraints();
+                    GBCInterno.gridx = 1;
+                    GBCInterno.gridy = 0;
+                    GBCInterno.gridheight = 1;
+                    GBCInterno.gridwidth = 1;
+                    GBCInterno.weighty = 50.0;
+                    GBCInterno.fill = GridBagConstraints.NONE;
+                    GBCInterno.anchor = GridBagConstraints.LAST_LINE_END;
+                    panelInteraccion.add(cambiar, GBCInterno);
 
+                    if (flag == 2) {
+                        panelPuntos.remove(mensajeFinal);
+                        panelPuntos.add(tarjetaPuntuacion);
+                    } else {
+                        seleccionDado.setBackground(null);
+                        seleccionDado.setEditable(false);
+                        seleccionDado.setFont(new Font(Font.DIALOG, Font.BOLD + Font.ITALIC, 12));
+                        panelSeleccion.add(seleccionDado);
+                    }
+
+                    panelSeleccion.setVisible(true);
+                    activar.setVisible(true);
+                    flag = 1;
+
+
+                    imagePuntuacion = new ImageIcon(getClass().getResource("/resources/ImagePuntuacion.jpeg"));
+                    puntos.setIcon(imagePuntuacion);
+                }
+
+            }
         }
     }
 }
+
+
