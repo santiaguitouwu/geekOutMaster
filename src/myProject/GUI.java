@@ -3,6 +3,7 @@ package myProject;
 ;
 
 import javax.swing.*;
+import javax.swing.plaf.ColorUIResource;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -28,10 +29,10 @@ public class GUI extends JFrame {
             + "\nEste juego lo jugará un único jugador y ganará si logra sumar 30 puntos en 5 rondas consecutivas de juego.";
 
     private Header headerProject;
-    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10, puntos;
+    private JLabel dado1, dado2, dado3, dado4, dado5, dado6, dado7, dado8, dado9, dado10, puntos, fondo;
     private JButton activar, cambiar, ayuda, escoger;
     private JPanel panelRondas, panelActivos, panelInactivos, panelUtilizados, panelPuntuacion, panelSeleccion, panelInteraccion, panelPuntos;
-    private ImageIcon imageDados, imagePuntuacion;
+    private ImageIcon imageDados, imagePuntuacion, imageFondo;
     private JTextArea seleccionDado, tarjetaPuntuacion, tarjetaRonda, mensajeFinal;
     private Escucha escucha;
     private Model modelGame;
@@ -105,7 +106,7 @@ public class GUI extends JFrame {
         dado9 = new JLabel(imageDados);
         dado10 = new JLabel(imageDados);
 
-        imagePuntuacion = new ImageIcon(getClass().getResource("/resources/cartaDados.png"));
+        imagePuntuacion = new ImageIcon(getClass().getResource("/resources/cartaDados2.jpeg"));
         puntos = new JLabel(imagePuntuacion);
 
 
@@ -164,7 +165,7 @@ public class GUI extends JFrame {
         add(panelUtilizados, constrains);
 
         panelPuntuacion = new JPanel();
-        panelPuntuacion.setPreferredSize(new Dimension(330, 242));
+        panelPuntuacion.setPreferredSize(new Dimension(400, 242));
         panelPuntuacion.setBorder(BorderFactory.createTitledBorder(" Puntuacion "));
         constrains.gridx = 1;
         constrains.gridy = 5;
@@ -174,7 +175,7 @@ public class GUI extends JFrame {
         add(panelPuntuacion, constrains);
 
         panelPuntos = new JPanel();
-        panelPuntos.setPreferredSize(new Dimension(330, 26));
+        panelPuntos.setPreferredSize(new Dimension(380, 30));
         panelPuntos.setBackground(Color.lightGray);
         panelPuntuacion.add(panelPuntos, BorderLayout.NORTH);
         tarjetaPuntuacion.setBackground(null);
@@ -188,7 +189,7 @@ public class GUI extends JFrame {
 
         panelInteraccion = new JPanel(new GridBagLayout());
         panelInteraccion.setPreferredSize(new Dimension(300, 110));
-        panelInteraccion.setBackground(Color.CYAN);
+        panelInteraccion.setBackground(null);
         constrains.gridx = 0;
         constrains.gridy = 6;
         constrains.gridheight = 1;
@@ -199,7 +200,7 @@ public class GUI extends JFrame {
 
         panelSeleccion = new JPanel();
         panelSeleccion.setPreferredSize(new Dimension(260, 52));
-        panelSeleccion.setBackground(Color.LIGHT_GRAY);
+        panelSeleccion.setBackground(Color.BLUE);
         GBCInterno.gridx = 0;
         GBCInterno.gridy = 0;
         GBCInterno.gridheight = 2;
@@ -287,11 +288,446 @@ public class GUI extends JFrame {
                     flag = 1;
 
 
-                    imagePuntuacion = new ImageIcon(getClass().getResource("/resources/ImagePuntuacion.jpeg"));
+                    imagePuntuacion = new ImageIcon(getClass().getResource("/resources/Puntuacion.jpg"));
                     puntos.setIcon(imagePuntuacion);
-                    //actualizarInterfaz();
+                    actualizarInterfaz();
+                }
+                cambiarDado(true,"");
+            }
+            else if (e.getSource() == ayuda) {
+                JOptionPane.showMessageDialog(null, MENSAJE_INICIO);
+            }
+            /*
+             * 'activa'button, responsible for activating the die, decides whether it is necessary to select another die, or if possible, to activate the selected die.
+             * */
+            else if (e.getSource() == activar){
+                dadoPrincipal=dadoSeleccionado-1;
+                if (dadoPrincipal==-1){
+                    dadoPrincipal=modelGame.contarDadosActivos()-1;
+                }else if(zonaActivos[dadoPrincipal]==null){
+                    cambiarDado(true,"activar");
                 }
 
+                if (zonaActivos[dadoPrincipal].equals("meeple")) {
+                    escogerDadoSecundario();
+
+                } else if (zonaActivos[dadoPrincipal].equals("cohete")) {
+                    escogerDadoSecundario();
+
+                } else if (zonaActivos[dadoPrincipal].equals("superheroe")) {
+                    escogerDadoSecundario();
+
+                }
+                else if (zonaActivos[dadoPrincipal].equals("corazon")){
+                    modelGame.activarDado(dadoPrincipal, 10);
+                    cambiarDado(true,"activar");
+                    actualizarInterfaz();
+                }
+                else if (zonaActivos[dadoPrincipal].equals("dragon")){
+                    if (modelGame.hayMasDadosAccion()){
+                        cambiarDado(false,"activar");
+                    }else {
+                        modelGame.activarDado(dadoPrincipal, 10);
+                        cambiarDado(true,"activar");
+                        actualizarInterfaz();
+                    }
+                }
+                else if (zonaActivos[dadoPrincipal].equals("42")){
+                    cambiarDado(false,"activar");
+                }
+            }
+            /*
+             * if a die has been activated and it requires a second die it is the responsibility of 'escoger' button
+             * */
+            else if (e.getSource()== escoger){
+                actualizarInformacion();
+                if(dadoPrincipal!=dadoSeleccionado-1){
+                    dadoSecundario=dadoSeleccionado-1;
+
+                    activar.setVisible(true);
+                    escoger.setVisible(false);
+
+
+                    GridBagConstraints GBCInterno = new GridBagConstraints();
+                    GBCInterno.gridx = 1;
+                    GBCInterno.gridy = 0;
+                    GBCInterno.weighty = 50.0;
+                    GBCInterno.anchor = GridBagConstraints.LAST_LINE_END;
+                    panelInteraccion.add(cambiar, GBCInterno);
+
+                    modelGame.activarDado(dadoPrincipal,dadoSecundario);
+                    cambiarDado(true,"escoger");
+                    actualizarInterfaz();
+                }
+                else{
+                    cambiarDado(false,"escoger");
+                }
+                actualizarInformacion();
+            }
+            if (modelGame.contarDadosActivos() == 0 || modelGame.soloHay("42")){
+                modelGame.actualizarRonda();
+                nuevoJuego();
+                actualizarInterfaz();
+            }
+            revalidate();
+            repaint();
+        }
+
+        /**
+         * in charge of adding the image to the label
+         * @param dadoN
+         * @return the die that was manipulated
+         */
+        private String getJLabel(int dadoN) {
+            switch (dadoN) {
+                case 1 :dado1.setIcon(imageDados);
+                    break;
+                case 2 : dado2.setIcon(imageDados);
+                    break;
+                case 3 : dado3.setIcon(imageDados);
+                    break;
+                case 4 : dado4.setIcon(imageDados);
+                    break;
+                case 5 : dado5.setIcon(imageDados);
+                    break;
+                case 6 : dado6.setIcon(imageDados);
+                    break;
+                case 7 : dado7.setIcon(imageDados);
+                    break;
+                case 8 : dado8.setIcon(imageDados);
+                    break;
+                case 9 : dado9.setIcon(imageDados);
+                    break;
+                case 10 : dado10.setIcon(imageDados);
+                    break;
+            }
+            return "dado"+dadoN;
+        }
+
+        /**
+         * responsible for adding the label to a certain zone of the interface
+         * @param dadoNu
+         * @param zona
+         */
+        private void addLabel(String dadoNu,String zona){
+
+            if(dadoNu.equals("dado1")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado1);
+                }
+                else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado1);
+                }
+                else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado1);
+                }
+            }
+            else if(dadoNu.equals("dado2")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado2);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado2);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado2);
+                }
+            }
+            else if(dadoNu.equals("dado3")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado3);
+                }
+                else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado3);
+                }
+                else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado3);
+                }
+            }
+            else if(dadoNu.equals("dado4")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado4);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado4);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado4);
+                }
+            }
+            else if(dadoNu.equals("dado5")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado5);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado5);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado5);
+                }
+            }
+            else if(dadoNu.equals("dado6")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado6);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado6);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado6);
+                }
+            }
+            else if(dadoNu.equals("dado7")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado7);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado7);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado7);
+                }
+            }
+            else if(dadoNu.equals("dado8")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado8);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado8);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado8);
+                }
+            }
+            else if(dadoNu.equals("dado9")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado9);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado9);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado9);
+                }
+            }
+            else if(dadoNu.equals("dado10")){
+                if(zona.equals("dadosActivos")){
+                    panelActivos.add(dado10);
+                }else if(zona.equals("dadosInactivos")){
+                    panelInactivos.add(dado10);
+                }else if(zona.equals("dadosUtilizados")){
+                    panelUtilizados.add(dado10);
+                }
+            }
+        }
+
+        /**
+         * responsible for implementing all visual changes to the interface
+         */
+        private void actualizarInterfaz(){
+            panelActivos.removeAll();
+            panelInactivos.removeAll();
+            panelUtilizados.removeAll();
+            actualizarInformacion ();
+            tarjetaRonda.setText("Ronda: "+ modelGame.getNumeroRonda());
+            for (int i=0;i<10;i++){
+                if(zonaActivos[i]!=null){
+                    if(zonaActivos[i]=="meeple"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/1.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosActivos") ;
+                    }else if(zonaActivos[i]=="cohete"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/2.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosActivos") ;
+                    }else if(zonaActivos[i]=="superheroe"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/4.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosActivos") ;
+                    }else if(zonaActivos[i]=="corazon"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/5.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosActivos") ;
+                    }else if(zonaActivos[i]=="dragon"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/3.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosActivos") ;
+                    }else if(zonaActivos[i]=="42"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/6.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosActivos") ;
+                    }
+                }
+                if(zonaInactivos[i]!=null){
+
+                    if(zonaInactivos[i]=="meeple"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/1.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosInactivos") ;
+                    }else if(zonaInactivos[i]=="cohete"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/2.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosInactivos") ;
+                    }else if(zonaInactivos[i]=="superheroe"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/4.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosInactivos") ;
+                    }else if(zonaInactivos[i]=="corazon"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/5.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosInactivos") ;
+                    }else if(zonaInactivos[i]=="dragon"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/3.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosInactivos") ;
+                    }else if(zonaInactivos[i]=="42"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/6.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosInactivos") ;
+                    }
+                }
+                if(zonaUtilizados[i]!=null){
+                    if(zonaUtilizados[i]=="meeple"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/1.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosUtilizados") ;
+                    }else if(zonaUtilizados[i]=="cohete"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/2.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosUtilizados") ;
+                    }else if(zonaUtilizados[i]=="superheroe"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/4.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosUtilizados") ;
+                    }else if(zonaUtilizados[i]=="corazon"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/5.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosUtilizados") ;
+                    }else if(zonaUtilizados[i]=="dragon"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/3.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosUtilizados") ;
+                    }else if(zonaUtilizados[i]=="42"){
+                        imageDados = new ImageIcon(getClass().getResource("/resources/6.png"));
+                        addLabel(getJLabel(controlLabel++),"dadosUtilizados") ;
+                    }
+                }
+                revalidate();
+                repaint();
+            }
+            if (modelGame.contarDadosIU("inactivos")>6&&modelGame.contarDadosIU("utilizados")<4){
+                panelUtilizados.setPreferredSize(new Dimension(330, 130));
+                panelInactivos.setPreferredSize(new Dimension(330, 330));
+            }
+            else if (modelGame.contarDadosIU("utilizados")>6&&modelGame.contarDadosIU("inactivos")<4){
+                panelUtilizados.setPreferredSize(new Dimension(330, 330));
+                panelInactivos.setPreferredSize(new Dimension(330, 130));
+            }
+            else if(modelGame.contarDadosIU("inactivos")==0&&modelGame.contarDadosIU("utilizados")>6) {
+                panelUtilizados.setPreferredSize(new Dimension(330, 430));
+                panelInactivos.setPreferredSize(new Dimension(330, 30));
+            }
+            else {
+                panelUtilizados.setPreferredSize(new Dimension(330, 230));
+                panelInactivos.setPreferredSize(new Dimension(330, 230));
+            }
+            controlLabel=1;
+            modelGame.actualizarRonda();
+            nuevoJuego();
+            tarjetaPuntuacion.setText("Puntuacion de la ronda: "+ modelGame.getPuntuacionRonda() +"            Puntuacion acumulada: "+ modelGame.getPuntuacionJuego());
+            revalidate();
+            repaint();
+        }
+
+        /**
+         * responsible for triggering all visual changes of the interface when a second die is to be selected
+         */
+        private void escogerDadoSecundario(){
+            cambiarDado(true,"activar");
+
+            activar.setVisible(false);
+            escoger.setVisible(true);
+
+            GridBagConstraints GBCInterno = new GridBagConstraints();
+            GBCInterno.gridx = 1;
+            GBCInterno.gridy = 0;
+            GBCInterno.ipadx = 10;
+            GBCInterno.weighty = 50.0;
+            GBCInterno.anchor = GridBagConstraints.LAST_LINE_END;
+            panelInteraccion.add(cambiar, GBCInterno);
+            actualizarInterfaz();
+        }
+
+        /**
+         * responsible for querying the internal information, with the model game class
+         */
+        private void actualizarInformacion (){
+            zonaActivos= modelGame.getCaraDado("dadosActivos");
+            zonaUtilizados= modelGame.getCaraDado("dadosUtilizados");
+            zonaInactivos= modelGame.getCaraDado("dadosInactivos");
+        }
+
+        /**
+         *change the selected die
+         * @param dadoAceptado, the die was correctly selected
+         * @param boton,the button from which the die was selected
+         */
+        private void cambiarDado(boolean dadoAceptado, String boton) {
+            if (dadoAceptado) {
+                actualizarInformacion();
+                if (dadoSeleccionado < modelGame.contarDadosActivos()) {
+                    seleccionDado.setText("El dado seleccionado es" + "\nel dado numero (" + (dadoSeleccionado + 1) + ") " + zonaActivos[dadoSeleccionado]);
+                    dadoSeleccionado = dadoSeleccionado + 1;
+                } else if (dadoSeleccionado >= modelGame.contarDadosActivos()) {
+                    seleccionDado.setText("El dado seleccionado es" + "\nel dado numero (" + 1 + ") " + zonaActivos[0]);
+                    dadoSeleccionado = 1;
+                }
+            }else {
+                actualizarInformacion();
+
+                if (dadoSeleccionado < modelGame.contarDadosActivos()) {
+                    if (boton.equals("activar")){
+                        seleccionDado.setText("No puedes activar este dado, Ahora"+"\nEl dado seleccionado es" + "\nel dado numero (" + (dadoSeleccionado + 1) + ") " + zonaActivos[dadoSeleccionado]);
+                    }else if(boton.equals("escoger")){
+                        seleccionDado.setText("No puedes escoger este dado, Ahora"+"\nEl dado seleccionado es" + "\nel dado numero (" + (dadoSeleccionado + 1) + ") " + zonaActivos[dadoSeleccionado]);
+                    }
+                    dadoSeleccionado += 1;
+                } else if (dadoSeleccionado >= modelGame.contarDadosActivos()) {
+                    if (boton.equals("activar")){
+                        seleccionDado.setText("No puedes activar este dado, Ahora"+"\nEl dado seleccionado es" + "\nel dado numero (" + 1 + ") " + zonaActivos[0]);
+                    }else if(boton.equals("escoger")){
+                        seleccionDado.setText("No puedes escoger este dado, Ahora"+"\nEl dado seleccionado es" + "\nel dado numero (" + 1 + ") " + zonaActivos[0]);
+                    }
+                    dadoSeleccionado = 1;
+                }
+            }
+        }
+
+        /**
+         *responsible for updating the interface at the end of the game, also to show if you won or lost.
+         */
+        private void nuevoJuego(){
+            if(modelGame.isEndGame()){
+                panelActivos.removeAll();
+                panelInactivos.removeAll();
+                panelUtilizados.removeAll();
+
+                cambiar.setText("Reiniciar Juego");
+                GridBagConstraints GBCInterno = new GridBagConstraints();
+                GBCInterno.anchor = GridBagConstraints.CENTER;
+                panelInteraccion.add(cambiar, GBCInterno);
+
+                panelSeleccion.setVisible(false);
+                activar.setVisible(false);
+
+                tarjetaRonda.setText("");
+
+                panelPuntos.remove(tarjetaPuntuacion);
+
+                imageDados = new ImageIcon(getClass().getResource("/resources/dado.png"));
+                dado1.setIcon(imageDados);
+                dado2.setIcon(imageDados);
+                dado3.setIcon(imageDados);
+                dado4.setIcon(imageDados);
+                dado5.setIcon(imageDados);
+                dado6.setIcon(imageDados);
+                dado7.setIcon(imageDados);
+                dado8.setIcon(imageDados);
+                dado9.setIcon(imageDados);
+                dado10.setIcon(imageDados);
+
+                panelActivos.add(dado1);
+                panelActivos.add(dado2);
+                panelActivos.add(dado3);
+                panelActivos.add(dado4);
+                panelActivos.add(dado5);
+                panelActivos.add(dado6);
+                panelActivos.add(dado7);
+                panelActivos.add(dado8);
+                panelActivos.add(dado9);
+                panelActivos.add(dado10);
+
+                if(modelGame.getPuntuacionJuego()>=30){
+                    mensajeFinal.setText("Felicidades, lograste acumular "+ modelGame.getPuntuacionJuego()+" puntos.");
+                    imagePuntuacion = new ImageIcon(getClass().getResource("/resources/win.jpeg"));
+                    puntos.setIcon(imagePuntuacion);
+                }else{
+                    mensajeFinal.setText("Lo sentimos, lograste acumular "+ modelGame.getPuntuacionJuego()+" puntos.");
+                    imagePuntuacion = new ImageIcon(getClass().getResource("/resources/loser.jpeg"));
+                    puntos.setIcon(imagePuntuacion);
+                }
+                panelPuntos.add(mensajeFinal);
+                modelGame.reIniciarJuego();
+                flag=2;
             }
         }
     }
